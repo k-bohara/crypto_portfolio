@@ -30,7 +30,7 @@ try:
         name = coin['name']
         symbol = coin['symbol']
         current_price = coin['quote']['USD']['price']
-        print(name, symbol, current_price)
+
         coin = Coins.query.filter_by(name=name).first()
         if coin:
             coin.current_price = current_price
