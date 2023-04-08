@@ -61,9 +61,9 @@ Flask-Migrate handles create database tables using the below commands.
 
 ## Run
 
-First you need to fetch some prices from coinmarket cap api using the data.py script.
+First you need to fetch some prices from coinmarket cap api using the fetch_price.py script.
 
-    (venv) $ python data.py
+    (venv) $ python fetch_price.py
 
 Now run the web app
 
