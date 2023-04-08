@@ -2,21 +2,34 @@
 
 Crypto Portfolio Tracker allows you to track your portfolio by creating an account and fill all the details of the transactions and populates summary of the portfolio as portfolio dashboard with graphs.
 
+**You need Python 3.8 or above and PostgreSQL for this project.**
+
 ## Getting Started
 
-$ git clone url
+Clone the repo
 
-### Sign Up for coinmarketCap API
+      $ git clone https://github.com/k-bohara/crypto_portfolio.git
 
-[CoinmarketCap](https://coinmarketcap.com/api/)
+Sign Up for [coinmarketCap API](https://coinmarketcap.com/api/) and get the api key.
 
 ## Create .env file
 
-(venv) $ cp .env.example .env
+      $ cp .env.example .env
+
+Insert your postgres database credentials and coinmarketcap API appropriately.
 
 ## Install requirements
 
-(venv) $ pip install -r requirements.txt
+Install and create virtualenv
+
+      $ sudo pip3 install virtualenv
+      $ virtualenv venv
+      $ source venv/bin/activate
+      (venv) $
+
+Now install requirements in venv
+
+      (venv) $ pip install -r requirements.txt
 
 ## Database
 
@@ -38,16 +51,22 @@ $ git clone url
 
       postgres=# grant all privileges on database <dbname> to <username>;
 
+Now exit the psotgres shell and go back to terminal to create tables.
+
+Flask-Migrate handles create database tables using the below commands.
+
     (venv) $ flask db init
     (venv) $ flask db migrate
     (venv) $ flask db upgrade
 
 ## Run
 
-### Extract coin prices from Coinmarketcap API
+First you need to fetch some prices from coinmarket cap api using the data.py script.
 
     (venv) $ python data.py
 
-### Run the crypto portfolio tracker
+Now run the web app
 
     (venv) $ python app.py
+
+Visit http://127.0.0.1:5000 to see the website. Create a user to add crypto currencies and create portfolio.
