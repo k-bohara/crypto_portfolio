@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+  <div class="row">
+    <div class="col-md-7 d-flex align-items-center">
+        <main class="px-3">
+      <h1>Keep track your of crypto assets.</h1>
+          {% if current_user.is_authenticated %}
+      <p class="lead">With <strong>Kuber</strong> you can manage your portfolio hassle-free through few click of buttons. Start your crypto journey today with <strong>Kuber.</strong></p>
+
+          <p class="lead">
+        <a href="{{ url_for('create_portfolio')}}" class="btn btn-lg btn-secondary fw-bold border-white bg-dark">Create Portfolio</a>
+      </p>
+          {% else %}
+          <p class="lead">With <strong>Kuber</strong> you can manage your portfolio hassle-free through few click of buttons.So join today with <strong>Kuber.</strong></p>
+     <p class="lead">
+        <a href="{{ url_for('register')}}" class="btn btn-lg btn-secondary fw-bold border-white bg-dark">Register</a>
+      </p>
+          {% endif %}
+    </main>
+    </div>
+    <div class="col-md-5">
+    <img src="{{url_for('static', filename='portfolio.png')}}" alt="portfolio image">
+</div>
+</div>
+</div>
+{% endblock content %}

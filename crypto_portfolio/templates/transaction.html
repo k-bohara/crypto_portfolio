@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container my-4">
+  <h2>Your Transactions</h2>
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <a href="{{url_for('home')}}" class="btn btn-dark me-md-2" type="button"><i class="bi bi-caret-left"></i>&nbsp;Back</a>
+  </div>
+  <table class="table my-4 rounded-2" style="background-color:#fff;">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Txn_Type</th>
+        <th scope="col">Price</th>
+        <th scope="col">Amount</th>
+        <th scope="col">Date</th>
+        <th scope="col">Fee</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for transaction in transactions %}
+      <tr>
+        <td>{{ transaction.name }}</td>
+        <td>{{ transaction.txn_type}}</td>
+        <td>{{ "${:,.2f}".format(transaction.price) }}</td>
+        <td>{{ "${:,.2f}".format(transaction.price * transaction.quantity)}} <br>
+          <span class="text-muted" style="font-size:0.9rem;">{{ transaction.quantity }}&ensp;{{ transaction.name }}</span>
+        </td>
+        <td>{{ transaction.date }}</td>
+        <td>{{ "${:,.2f}".format(transaction.fee) }}</td>
+        <td><a href="{{url_for('update_transaction', transaction_id=transaction.id)}}">
+          <i class="bi bi-pencil" style="font-size: 1.2rem; color: grey; font-weight:bolder"></i></a> &emsp;&emsp;
+          <a href="{{url_for('delete_transaction', transaction_id=transaction.id)}}">
+          <i class="bi bi-trash" style="font-size: 1.2rem; color: grey; font-weight:bolder"></i></a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

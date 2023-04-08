@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center my-3">Update Transaction</h2>
+    <form method="POST" action="{{url_for('update_transaction',transaction_id=transaction_log.id)}}">
+      <div class="mb-3">
+        <label for="quantity" class="form-label">Quantity</label>
+        <input type="number" class="form-control" id="quantity" name="quantity" placeholder="0.00" step="any" value="{{transaction_log.quantity}}">
+      </div>
+      <div class="mb-3">
+        <label for="price" class="form-label">Price Per Coin</label>
+        <input type="number" class="form-control" id="price" name="price" placeholder="0.00" min="0" max="1000000" step="any" value="{{transaction_log.price}}">
+      </div>
+      <div class="mb-3">
+         <label for="date" class="form-label">Date</label>
+          <input type="datetime-local" class="form-control" id="date" name="date" value="{{transaction_log.date}}">
+
+      </div>
+        <div class="mb-3">
+        <label for="fee" class="form-label">Fee</label>
+        <input type="number" class="form-control" id="fee" name="fee" placeholder="0.00" min="0" max="1000000" step="any" value="{{transaction_log.fee}}">
+      </div>
+      <div class="mb-3">
+        <label for="notes" class="form-label">Notes</label>
+        <textarea class="form-control" id="notes" rows="3" name="notes" placeholder="Write Notes"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock content %}

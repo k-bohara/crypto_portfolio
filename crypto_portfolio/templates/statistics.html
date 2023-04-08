@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+  <h2>MY PORTFOLIO</h2>
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <a href="{{url_for('home')}}" class="btn btn-dark me-md-2" type="button"><i class="bi bi-caret-left"></i>&nbsp;Back</a>
+  </div>
+  <!-- cards-->
+  <div class="row my-4 gy-4">
+  <div class="col-md-6 col-xl-3">
+    <div class="card rounded border-0">
+      <div class="card-body">
+        <h5 class="card-title">Current Balance</h5>
+        <p class="card-text">{{ "${:,.2f}".format(current_balance) }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-3">
+    <div class="card rounded border-0">
+      <div class="card-body">
+        <h5 class="card-title">Total Invested</h5>
+        <p class="card-text">{{ "${:,.2f}".format(total_amount_invested) }}</p>
+      </div>
+    </div>
+  </div>
+      <div class="col-md-6 col-xl-3">
+    <div class="card rounded border-0">
+      <div class="card-body">
+        <h5 class="card-title">All Time Profit</h5>
+         {% if current_status > 0 and current_value > 0 %}
+        <p class="card-text text-success "><i class="bi bi-caret-up-fill"></i>&ensp;{{ "{:.2f}%".format(current_status) }}({{ "${:,.2f}".format(current_value) }})</p>
+        {% else %}
+        <p class="card-text text-danger"><i class="bi bi-caret-down-fill"></i>{{ "{:.2f}%".format(current_status)}}({{ "${:,.2f}".format(current_value) }})</p>
+
+        {% endif %}
+      </div>
+    </div>
+  </div>
+      <div class="col-md-6 col-xl-3">
+    <div class="card rounded border-0">
+      <div class="card-body">
+        <h5 class="card-title">Best Performer</h5>
+        <p class="card-text">{{ best }} ({{ "{:,.2f}%".format(profit_loss_percent[best]) }})</p>
+      </div>
+    </div>
+  </div>
+ </div>
+
+
+<!-- charts -->
+ <div class="row gy-4">
+   <div class="col-lg-5">
+     <div class="card rounded border-0">
+       <div class="card-body">
+         <h5>My Holdings</h5>
+         <div class="d-flex justify-content-center">
+          <canvas id="myChart" style="width: 100%; max-width: 300px; max-height:400px; "></canvas>
+           <script>
+            let selectedDatasetIndex = undefined;
+            let selectedIndex = undefined;
+
+            const data = {
+                    labels: {{ coin_name_list|tojson }},
+                    datasets: [{
+                        label: '# of Votes',
+                        data: {{ coin_quantity_list|tojson }},
+                        backgroundColor: [
+                            'rgba(246, 107, 14, 1)',
+                            'rgba(32, 83, 117, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(178, 6, 0, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(18, 92, 19, 1)',
+                            'rgba(54, 34, 34, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(17, 43, 60, 1)',
+                        ],
+                        borderWidth: 1,
+                        cutout: '90%',
+                        borderRadius: 20,
+                        offset: 10
+                    }]
+              };
+
+              const clickLabel = {
+                id: 'clickLabel',
+                afterDraw: (chart, args, options) => {
+                  const {ctx, chartArea:{ width, height, top }} = chart;
+
+                  if(selectedDatasetIndex >= 0){
+                    const sum = chart._metasets[selectedDatasetIndex].total;
+                    const value = chart._metasets[selectedDatasetIndex]._parsed[selectedIndex];
+                    const color = chart.data.datasets[selectedDatasetIndex].backgroundColor[selectedIndex];
+                    const percentage = (value / sum * 100).toFixed(2);
+                    const label = chart.data.labels[selectedIndex]
+                    ctx.save();
+                    ctx.font = 'bolder 40px Arial';
+                    ctx.fillStyle = color;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(label, width/2, (height/2))
+                    ctx.fillText(percentage + '%', width/2, height/2 + top+10);
+                    ctx.restore();
+                  }
+                }
+              }
+
+            <!--config block -->
+              const config = {
+                type: 'doughnut',
+                data ,
+                  options :{
+                  onClick(click, element, chart) {
+                    if(element[0]) {
+                      selectedDatasetIndex = element[0].datasetIndex;
+                      selectedIndex = element[0].index;
+                      chart.draw();
+                    }
+                  }
+                },
+                plugins: [clickLabel]
+              };
+
+            <!--render block-->
+              const myChart = new Chart(
+                document.getElementById('myChart'),
+                config
+              );
+            </script>
+           </div>
+        </div>
+      </div>
+</div>
+  <div class="col-lg-7">
+     <div class="card rounded border-0">
+       <div class="card-body mx-4">
+         <h5>Current Balance</h5>
+           <canvas id="myChartLine" style="width: 100%; height: 400px;" ></canvas>
+              <script>
+              <!--  line chart -->
+                const labels = {{ current_balance_date|tojson }};
+                const dataline = {
+                  labels: labels,
+                  datasets: [{
+                    label: 'Current Balance',
+                    backgroundColor: '#83BD75',
+                    borderColor: '#83BD75',
+                    data: {{ current_balance_details|tojson }},
+                    borderWidth: 2,
+                    pointRadius: 0
+                  }]
+                };
+
+                const configLine = {
+                  type: 'line',
+                  data: dataline,
+                  options: {
+                    tension: 0.4,
+                    scales: {
+                      y:{
+                        beginAtZero: true,
+                        grid: {
+                        display: true,
+                        drawBorder: false
+                        }
+                     },
+                     x:{
+                        grid:{
+                          display: false,
+                          drawBorder: false
+                          },
+                        ticks: {
+                         display: false
+                         }
+                      }
+                   },
+                    plugins: {
+                      legend: {
+                        display: false,
+                        position: 'chartArea',
+                        align: 'start',
+                        reverse: true
+                      },
+                      title: {
+                        text: 'Balance',
+                        display: true,
+                        align: 'center',
+                        position:'left',
+                        font:{
+                          size: 16
+                          }
+                      },
+                      tooltip: {
+                        backgroundColor: '#fff',
+                        borderColor: '#83BD75',
+                        borderWidth: 1,
+                        titleColor: 'black',
+                        titleAlign: 'center',
+                        bodyAlign: 'center',
+                        displayColors: true,
+                        boxWidth: 0,
+                        boxHeight: 0,
+                        usePointStyle: true,
+                        yAlign: 'bottom',
+                        callbacks: {
+                          labelTextColor: function(context) {
+                            return
+                          },
+                           labelTextColor: function(context) {
+                          return {
+                            pointStyle: 'triangle',
+                            rotation: 0
+                            };
+                          }
+                        }
+
+                      }
+                    }
+                  }
+              };
+
+              const myChartLine = new Chart(
+              document.getElementById('myChartLine'),
+              configLine
+              );
+                </script>
+             </div>
+            </div>
+        </div>
+      </div>
+</div>
+
+<!--  table-->
+
+<div class="container my-4">
+  <table class="table table-nowrap table-centered" style="background-color:#fff">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Price</th>
+        <th scope="col">Assets</th>
+        <th scope="col">Avg. Buy Price</th>
+        <th scope="col">Profit/Loss</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for coin_name, coin_weight in coin_quantity.items() %}
+      <tr>
+        <td>{{ coin_name }}</td>
+        <td>{{ "${:,.6f}".format(coin_current_price[coin_name]) }}</td>
+        <td>{{ "${:,.2f}".format(coin_current_value[coin_name]) }}<br>
+          <span class="text-muted" style="font-size:0.9rem;">{{ coin_weight }} {{ coin_name }}</span>
+        </td>
+        <td>{{ "${:,.2f}".format(average_buy_price[coin_name]) }}</td>
+        {% if profit_loss_percent[coin_name] > 0 %}
+        <td>{{ "${:,.2f}".format(profit_loss_value[coin_name])}} <br>
+          <span class="text-success" style="font-size:0.9rem;">
+            <i class="bi bi-caret-up-fill"></i>
+            {{ "{:.2f}%".format(profit_loss_percent[coin_name]) }}</span></td>
+        {% else %}
+        <td>{{ "${:,.2f}".format(profit_loss_value[coin_name])}} <br>
+          <span class="text-danger" style="font-size:0.9rem;"><i class="bi bi-caret-down-fill "></i>
+            {{ "{:.2f}%".format(profit_loss_percent[coin_name]) }}
+          </span></td>
+        {% endif %}
+          <div class="dropdown">
+            <td><a href="{{url_for('create_portfolio')}}"><i class="bi bi-plus-lg" style="font-size: 1.2rem; color: grey; font-weight:bolder"></i></a>
+            <a class="btn" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-three-dots-vertical" style="font-size: 1.2rem; color: grey; font-weight:900"></i></a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li><a class="dropdown-item" href="{{url_for('transaction', username=user.username)}}">
+                <i class="bi bi-arrow-left-right" style="font-size: 1.2rem; color: black; font-weight:900"></i>&nbsp;Transactions</a></li>
+              <li><a class="dropdown-item" href="{{url_for('remove_asset', coin_name=coin_name)}}">
+                <i class="bi bi-trash" style="font-size: 1rem; color: black; font-weight:bolder"></i>&nbsp;Remove Asset</a></li>
+            </ul>
+            </td>
+          </div>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock content %}
+
+

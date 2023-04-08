@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container h-100 d-flex justify-content-center align-items-center my-4">
+  <div class="container w-50">
+    <h2 class="text-center my-4">Add Transaction</h2>
+    <form class="row" method="POST" action="{{url_for('create_portfolio')}}">
+      <div class="col-md-8 mb-3">
+        <select class="form-select" aria-label="Default select example" name="coin">
+          {% for coin in all_coins %}
+          <option value="{{ coin.name }}">{{ coin.name }} {{ coin.symbol }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4 mb-3">
+        <select class="form-select" aria-label="Default select example" name="type">
+          <option value="Buy">Buy</option>
+          <option value="Sell">Sell</option>
+        </select>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="quantity" class="form-label">Quantity</label>
+        <input type="number" class="form-control" id="quantity" name="quantity" placeholder="0.00" step="any">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="price" class="form-label">Price Per Coin</label>
+        <input type="number" class="form-control" id="price" name="price" placeholder="$0.00" min="0" max="1000000" step="any">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="date" class="form-label">Date</label>
+        <input type="datetime-local" class="form-control" id="date" name="date">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="fee" class="form-label">Fee</label>
+        <input type="number" class="form-control" id="fee" name="fee" placeholder="$0.00" min="0" max="1000000" step="any">
+      </div>
+      <div class="col-12 mb-3">
+        <label for="notes" class="form-label">Notes</label>
+        <textarea class="form-control" id="notes" rows="2" name="notes" placeholder="Write Notes"></textarea>
+      </div>
+      <div class="d-grid gap-2 d-md-flex justify-content-between">
+        <a href="{{url_for('home')}}" class="btn btn-dark me-md-2" type="button"><i class="bi bi-caret-left"></i>&nbsp;Back</a>
+        <button class="btn btn-dark" type="submit">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}
