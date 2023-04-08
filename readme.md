@@ -70,3 +70,15 @@ Now run the web app
     (venv) $ python app.py
 
 Visit http://127.0.0.1:5000 to see the website. Create a user to add crypto currencies and create portfolio.
+
+### Demo Screenshots
+
+### Transactions
+
+![index](/screenshots/transactions.png)
+
+#### Dashboard
+
+![index](/screenshots/dashboard.png)
+
+More screenshots available inside `screenshots` directory
